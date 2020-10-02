@@ -74,7 +74,7 @@ function submitForm() {
 }
 
 function isFormValid(){
-    return contactNameInput.value !== '' && contactSurnameInput.value !== '' && contactPhoneInput.value !== '';
+    return contactNameInput.value !== '' && contactSurnameInput.value !== '' && +contactPhoneInput.value;
 }
 
 function addContact(contact) {
