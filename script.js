@@ -1,101 +1,111 @@
 const DELETE_BTN_CLASS = 'delete-btn';
+const UPDATE_BTN_CLASS = 'update-btn';
+// const UPDATE_INPUT = 'updateInput';
+const CONTACTS_URL = 'https://5dd3d5ba8b5e080014dc4bfa.mockapi.io/contacts/';
 
 const addContactForm = document.getElementById('addContactForm');
 const contactNameInput = document.getElementById('contactNameInput');
-const contactNumberInput = document.getElementById('contactNumberInput');
-const contactEmailInput = document.getElementById('contactEmailInput');
-const contactActionInput = document.getElementById('contactActionInput');
+const contactSurnameInput = document.getElementById('contactSurnameInput');
+const contactPhoneInput = document.getElementById('contactPhoneInput');
 const contactList = document.getElementById('contactList');
 const contactItemTemplate = document.getElementById('contactItemTemplate').innerHTML;
 
-let addContactList = [];
+let listAddedContacts = [];
 
 addContactForm.addEventListener('submit', onAddContactFormSubmit);
 contactList.addEventListener('click', onContactListCLick);
 
 init();
 
-function onAddContactFormSubmit(event) {
-    event.preventDefault();
+function onAddContactFormSubmit(e) {
+    e.preventDefault();
 
     submitForm();
 }
 
-function onContactListCLick(event) {
-    if (event.target.classList.contains(DELETE_BTN_CLASS)) {
-        deleteContact(event.target.parentElement);
+function onContactListCLick(e) {
+    switch(true) {
+        case e.target.classList.contains(DELETE_BTN_CLASS):
+            deleteContact(e.target.parentElement.dataset.id);
+            break;
+        // case e.target.classList.contains(UPDATE_BTN_CLASS):
+        //     updateContact(e.target.parentElement.dataset.id);
+        //     break;
     }
 }
 
 function init() {
-    restoreData();
-    renderList();
+    getList();
+}
+
+function getList() {
+    return fetch(CONTACTS_URL)
+        .then((res) => res.json())
+        .then((data) => (listAddedContacts = data))
+        .then(renderList);
+}
+
+function renderList(list) {
+    contactList.innerHTML = list
+        .map((contact) =>  
+        {
+            return contactItemTemplate 
+                .replace('{{id}}', contact.id)
+                .replace('{{name}}', contact.name)
+                .replace('{{surname}}', contact.surname)
+                .replace('{{phone}}', contact.phone)
+        })
+        .join('');
 }
 
 function submitForm() {
-    const contactItem = {
-        id: Date.now(),
-        nameContact: contactNameInput.value,
-        numberContact: contactNumberInput.value,
-        emailContact: contactEmailInput.value,
-        actionContact: contactActionInput.value,
-    };
+    if (isFormValid()){
+        const contactItem = {
+            id: Date.now(),
+            name: contactNameInput.value,
+            surname: contactSurnameInput.value,
+            phone: contactPhoneInput.value,
+        };
 
-    addContact(contactItem);
-    clearForm();
+        addContact(contactItem).then(getList);
+        clearForm();
+    } else {
+        alert('Неверные данные. Введите заново')
+    }
 }
 
-function addContact(contactItem) {
-    addContactList.push(contactItem);
+function isFormValid(){
+    return contactNameInput.value !== '' && contactSurnameInput.value !== '' && contactPhoneInput.value !== '';
+}
 
-    saveData();
+function addContact(contact) {
+    return fetch(CONTACTS_URL, {
+        method: 'POST',
+        body: JSON.stringify(contact),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+}
 
-    renderTask(contactItem);
+function deleteContact(id){
+    fetch(CONTACTS_URL + id, {
+        method: 'DELETE',
+    }).then(getList); 
 }
 
 function clearForm(){
     contactNameInput.value = "";
-    contactNumberInput.value = "";
-    contactEmailInput.value = "";
-    contactActionInput.value = "";
+    contactSurnameInput.value = "";
+    contactPhoneInput.value = "";
 }
 
-function renderList() {
-    addContactList.forEach((contactItem) => renderTask(contactItem));
-}
-
-function renderTask(contactItem) {
-    const html = contactItemTemplate
-        .replace('{{id}}', contactItem.id)
-        .replace('{{name}}', contactItem.nameContact)
-        .replace('{{number}}', contactItem.numberContact)
-        .replace('{{email}}', contactItem.emailContact)
-        .replace('{{action}}', contactItem.actionContact)
-    contactList.insertAdjacentHTML('beforeend', html);
-}
-
-function toggleContactState(el) {
-    console.log(el.dataset.contactId);
-    const contactId = el.dataset.contactId;
-    const contact = addContactList.find((item) => item.id == contactId);
-
-    saveData();
-}
-
-function deleteContact(el) {
-    const contactId = +el.dataset.contactId;
-    addContactList = addContactList.filter((item) => item.id !== contactId);
-
-    saveData();
-
-    el.remove();
-}
-
-function saveData() {
-    localStorage.setItem('addContactList', JSON.stringify(addContactList));
-}
-
-function restoreData() {
-    const data = localStorage.getItem('addContactList');
-    addContactList = data ? JSON.parse(data) : [];
-}
+// function updateContact(id, contactItem) {
+//     fetch(CONTACTS_URL + id, {
+//         method: 'PUT',
+//         body: JSON.stringify(contactItem),
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//     }).then(getList); 
+// }
