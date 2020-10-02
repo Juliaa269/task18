@@ -1,11 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact List</title>
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./style.css" />
+        <script src="./script.js" async></script>
+        <title>Contacts</title>
+    </head>
     <body>
-        
+        <div class="container">
+            <div class="container-of-items">
+                <span class="items-name">Имя контакта</span>
+                <span class="items-name">Номер телефона</span>
+                <span class="items-name">Почта</span>
+                <span class="items-name">Действия</span>
+            </div>
+            <div id="contactList" class="contact-list u-full-width"></div>
+            <form id="addContactForm">
+                <div class="row">
+                    <div class="formContacts">
+                        <input
+                            type="text"
+                            id="contactNameInput"
+                            class="u-full-width"
+                            placeholder="Введите имя."
+                            required
+                        />
+                        <input
+                            type="tel"
+                            id="contactNumberInput"
+                            class="u-full-width"
+                            placeholder="Введите номер телефона."
+                            required
+                        />
+                        <input
+                            type="email"
+                            id="contactEmailInput"
+                            class="u-full-width"
+                            placeholder="Введите почту."
+                            required
+                        />
+                        <input
+                            type="text"
+                            id="contactActionInput"
+                            class="u-full-width"
+                            placeholder="Введите действие."
+                            required
+                        />
+                    </div>
+                    <div class="add-btn">
+                        <input type="submit" class="u-full-width" value="Добавить контакт">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script type="text/template" id="contactItemTemplate">
+            <div class="contact-item u-full-width" data-contact-id="{{id}}">
+                <div class="items">{{name}}</div>
+                <div class="items">{{number}}</div>
+                <div class="items">{{email}}</div>
+                <div class="items">{{action}}</div>
+                <span class="delete-btn">✘</span>
+            </div>
+        </script>
     </body>
 </html>
