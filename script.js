@@ -1,6 +1,5 @@
 const DELETE_BTN_CLASS = 'delete-btn';
 const UPDATE_BTN_CLASS = 'update-btn';
-// const UPDATE_INPUT = 'updateInput';
 const CONTACTS_URL = 'https://5dd3d5ba8b5e080014dc4bfa.mockapi.io/contacts/';
 
 const addContactForm = document.getElementById('addContactForm');
@@ -28,9 +27,9 @@ function onContactListCLick(e) {
         case e.target.classList.contains(DELETE_BTN_CLASS):
             deleteContact(e.target.parentElement.dataset.id);
             break;
-        // case e.target.classList.contains(UPDATE_BTN_CLASS):
-        //     updateContact(e.target.parentElement.dataset.id);
-        //     break;
+        case e.target.classList.contains(UPDATE_BTN_CLASS):
+            updateContact(e.target.parentElement.dataset.id);
+            break;
     }
 }
 
